@@ -1,0 +1,140 @@
+#include <iostream>
+using namespace std;
+
+const int MAX = 500;
+
+struct Personaje {
+    string nombre;
+    string elemento;
+    string clase;
+    int vidaMaxima;
+    int danio;
+    string descripcion;
+    bool desbloqueado;
+};
+
+typedef Personaje tvector[MAX];
+
+void insertarOrdenado(tvector &v, int &ocup, Personaje nuevo) {
+    if (ocup >= MAX) {
+        cout << "No se pueden agregar más personajes." << endl;
+        return;
+    }
+
+    int i = ocup - 1;
+    while (i >= 0 && v[i].nombre > nuevo.nombre) {
+        v[i + 1] = v[i];
+        i--;
+    }
+    v[i + 1] = nuevo;
+    ocup++;
+}
+
+int buscarPersonaje(tvector v, int ocup, string nombreBuscado) {
+    for (int i = 0; i < ocup; i++) {
+        if (v[i].nombre == nombreBuscado)
+            return i;
+    }
+    return -1;
+}
+
+void eliminarPersonaje(tvector &v, int &ocup, string nombreEliminar) {
+    int pos = buscarPersonaje(v, ocup, nombreEliminar);
+    if (pos == -1) {
+        cout << "Personaje no encontrado." << endl;
+        return;
+    }
+    for (int i = pos; i < ocup - 1; i++) {
+        v[i] = v[i + 1];
+    }
+    ocup--;
+    cout << "Personaje eliminado correctamente." << endl;
+}
+
+void mostrarPersonajes(tvector v, int ocup) {
+    if (ocup == 0) {
+        cout << "No hay personajes registrados." << endl;
+        return;
+    }
+
+    for (int i = 0; i < ocup; i++) {
+        cout << "-----------------------------------" << endl;
+        cout << "Nombre: " << v[i].nombre << endl;
+        cout << "Elemento: " << v[i].elemento << endl;
+        cout << "Clase: " << v[i].clase << endl;
+        cout << "Vida Máxima: " << v[i].vidaMaxima << endl;
+        cout << "Daño: " << v[i].danio << endl;
+        cout << "Descripción: " << v[i].descripcion << endl;
+        cout << "Desbloqueado: " << (v[i].desbloqueado ? "Sí" : "No") << endl;
+    }
+    cout << "-----------------------------------" << endl;
+}
+
+int main() {
+    tvector personajes;
+    int ocup = 0;
+    int opcion;
+
+    do {
+        cout << "=== MENU DE PERSONAJES ===" << endl;
+        cout << "1. Insertar nuevo personaje" << endl;
+        cout << "2. Buscar personaje" << endl;
+        cout << "3. Eliminar personaje" << endl;
+        cout << "4. Mostrar todos los personajes" << endl;
+        cout << "5. Salir" << endl;
+        cout << "Ingrese una opcion: ";
+        cin >> opcion;
+
+        if (opcion == 1) {
+            Personaje nuevo;
+            cout << "Nombre: ";
+            cin >> nuevo.nombre;
+            cout << "Elemento: ";
+            cin >> nuevo.elemento;
+            cout << "Clase: ";
+            cin >> nuevo.clase;
+            cout << "Vida Máxima: ";
+            cin >> nuevo.vidaMaxima;
+            cout << "Daño: ";
+            cin >> nuevo.danio;
+            cout << "Descripción: ";
+            cin >> nuevo.descripcion;
+            cout << "¿Está desbloqueado? (1 = Sí, 0 = No): ";
+            cin >> nuevo.desbloqueado;
+
+            insertarOrdenado(personajes, ocup, nuevo);
+
+        } else if (opcion == 2) {
+            string nombre;
+            cout << "Ingrese el nombre del personaje a buscar: ";
+            cin >> nombre;
+
+            int pos = buscarPersonaje(personajes, ocup, nombre);
+            if (pos != -1) {
+                cout << "Personaje encontrado:" << endl;
+                cout << "Nombre: " << personajes[pos].nombre << endl;
+                cout << "Elemento: " << personajes[pos].elemento << endl;
+                cout << "Clase: " << personajes[pos].clase << endl;
+                cout << "Vida Máxima: " << personajes[pos].vidaMaxima << endl;
+                cout << "Daño: " << personajes[pos].danio << endl;
+                cout << "Descripción: " << personajes[pos].descripcion << endl;
+                cout << "Desbloqueado: " << (personajes[pos].desbloqueado ? "Sí" : "No") << endl;
+            } else {
+                cout << "No se encontró el personaje." << endl;
+            }
+
+        } else if (opcion == 3) {
+            string nombre;
+            cout << "Ingrese el nombre del personaje a eliminar: ";
+            cin >> nombre;
+            eliminarPersonaje(personajes, ocup, nombre);
+
+        } else if (opcion == 4) {
+            mostrarPersonajes(personajes, ocup);
+        }
+
+    } while (opcion != 5);
+
+    cout << "Programa finalizado." << endl;
+    return 0;
+}
